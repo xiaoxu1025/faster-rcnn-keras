@@ -85,7 +85,7 @@ def _main(args):
     keep_ind = py_cpu_nms(pred_boxes, thresh)
     final_boxes = pred_boxes[keep_ind, :]
     # draw_rect
-    final_boxes = [[1, 1, 100, 100, 0.9, 1]]
+    # final_boxes = [[1, 1, 100, 100, 0.9, 1]]
     for idx in range(len(final_boxes)):
         # x1, y1, x2, y2, score, cls
         x1, y1, x2, y2, score, cls = final_boxes[idx]
