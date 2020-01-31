@@ -85,19 +85,21 @@ def _main(args):
     keep_ind = py_cpu_nms(pred_boxes, thresh)
     final_boxes = pred_boxes[keep_ind, :]
     # draw_rect
-    # final_boxes = [[1, 1, 100, 100, 0.9, 1]]
+    # final_boxes = [[50, 50, 200, 300, 0.9, 1]]
     for idx in range(len(final_boxes)):
         # x1, y1, x2, y2, score, cls
         x1, y1, x2, y2, score, cls = final_boxes[idx]
         # ratios 缩放回原图大小
         x1, x2 = int(round(x1 / ratios[0])), int(round(x2 / ratios[0]))
         y1, y2 = int(round(y1 / ratios[1])), int(round(y2 / ratios[1]))
-        cv2.rectangle(img, (x1, y1), (x2, y2), (int(class_color_mapping.get(cls)[0]),
-                                                int(class_color_mapping.get(cls)[1]),
-                                                int(class_color_mapping.get(cls)[2])), 2)
+        color = (int(class_color_mapping.get(cls)[0]),
+                 int(class_color_mapping.get(cls)[1]),
+                 int(class_color_mapping.get(cls)[2]))
+        cv2.rectangle(img, (x1, y1), (x2, y2), color, 1)
         text_lable = '%s: %s' % (class_names[cls], score)
-        textOrg = (x1, y1 - 2)
-        cv2.putText(img, text_lable, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
+        textOrg = (x1, y1 - 3)
+        # cv2.rectangle(img, (x1, y1 - 6), (x2, y1), color, -1)
+        cv2.putText(img, text_lable, textOrg, cv2.FONT_HERSHEY_PLAIN, 0.4, color, 1)
     cv2.imwrite(os.path.join(output_path, file_name), img)
 
 

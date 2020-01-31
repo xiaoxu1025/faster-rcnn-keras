@@ -42,17 +42,23 @@ input_rois = Input(shape=(None, 5))
 # shares conv
 model_body = get_model_body(input_tensor)
 
-# rpn
+# rpn_model
 rpn_model = get_rpn_model(model_body, anchors_num)
-if os.path.exists('./logs/rpn_model_weights.h5'):
-    rpn_model.load_weights('./logs/rpn_model_weights.h5', by_name=True)
-# fastrcnn
+# fastrcnn_model
 fastrcnn_model = get_fastrcnn_model(model_body=model_body, input_rois=input_rois,
                                     classes_num=classes_num, keep_prob=keep_prob)
-if os.path.exists('./logs/fastrcnn_model_weights.h5'):
-    fastrcnn_model.load_weights('./logs/fastrcnn_model_weights.h5', by_name=True)
+# fasterrcnn_model
 fasterrcnn_model = get_fasterrcnn_model(model_body=model_body, input_rois=input_rois,
                                         rpn_model=rpn_model, fastrcnn_model=fastrcnn_model)
+
+if os.path.exists('./logs/fastrcnn_model_weights.h5'):
+    fastrcnn_model.load_weights('./logs/fastrcnn_model_weights.h5', by_name=True)
+
+if os.path.exists('./logs/rpn_model_weights.h5'):
+    rpn_model.load_weights('./logs/rpn_model_weights.h5', by_name=True)
+
+if os.path.exists('./logs/fasterrcnn_model_weights.h5'):
+    fastrcnn_model.load_weights('./logs/fasterrcnn_model_weights.h5', by_name=True)
 
 optimizer = Adam(lr=1e-5)
 optimizer_classifier = Adam(lr=1e-5)
@@ -92,6 +98,21 @@ def write_log(callback, names, logs, batch_no):
         summary.value.add(tag=name, simple_value=value)
         callback.writer.add_summary(summary, batch_no)
         callback.writer.flush()
+
+
+def save_weights(rpn_model, fastrcnn_model, fasterrcnn_model):
+    rpn_model_path = os.path.join(log_path, 'rpn_model_weights.h5')
+    fastrcnn_model_path = os.path.join(log_path, 'fastrcnn_model_weights.h5')
+    fasterrcnn_model_path = os.path.join(log_path, 'fasterrcnn_model_weights.h5')
+    if os.path.exists(rpn_model_path):
+        os.remove(rpn_model_path)
+    if os.path.exists(rpn_model_path):
+        os.remove(fastrcnn_model_path)
+    if os.path.exists(rpn_model_path):
+        os.remove(fasterrcnn_model_path)
+    rpn_model.save_weights(rpn_model_path)
+    fastrcnn_model.save_weights(fastrcnn_model_path)
+    fasterrcnn_model.save_weights(fasterrcnn_model_path)
 
 
 for epoch_num in range(num_epochs):
@@ -149,11 +170,7 @@ for epoch_num in range(num_epochs):
             if curr_loss < best_loss:
                 best_loss = curr_loss
                 # save weigths
-                rpn_model.save_weights(os.path.join(log_path, 'rpn_model_weights_%s_%s.h5' % (epoch_num + 1, iter_num)))
-                fastrcnn_model.save_weights(
-                    os.path.join(log_path, 'fastrcnn_model_weights_%s_%s.h5' % (epoch_num + 1, iter_num)))
-                fasterrcnn_model.save_weights(
-                    os.path.join(log_path, 'fasterrcnn_model_weights_%s_%s.h5' % (epoch_num + 1, iter_num)))
+                save_weights(rpn_model, fastrcnn_model, fasterrcnn_model)
 
         if iter_num == epoch_length:
             # 停止一个循环
@@ -174,9 +191,7 @@ for epoch_num in range(num_epochs):
             print('epoch: {} Elapsed time: {}'.format(epoch_num + 1, time.time() - start_time))
             if curr_loss < best_loss:
                 best_loss = curr_loss
-                rpn_model.save_weights(os.path.join(log_path, 'rpn_model_weights_%s.h5' % (epoch_num + 1)))
-                fastrcnn_model.save_weights(os.path.join(log_path, 'fastrcnn_model_weights_%s.h5' % (epoch_num + 1)))
-                fasterrcnn_model.save_weights(
-                    os.path.join(log_path, 'fasterrcnn_model_weights_%s.h5' % (epoch_num + 1)))
+                # save weigths
+                save_weights(rpn_model, fastrcnn_model, fasterrcnn_model)
             iter_num = 0
             break
