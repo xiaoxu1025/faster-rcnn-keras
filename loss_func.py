@@ -39,7 +39,7 @@ def rpn_reg_loss(y_true, y_pred):
 
     rpn_bbox_reg = tf.reduce_sum(tf.multiply(rpn_bbox_outside_weights, diff_sl1))
     rpn_bbox_reg_losses = config.train_rpn_bbox_lambda * rpn_bbox_reg
-    return rpn_bbox_reg
+    return rpn_bbox_reg_losses
 
 
 def fastrcnn_cls_loss(y_true, y_pred):
