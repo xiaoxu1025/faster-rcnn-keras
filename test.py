@@ -74,6 +74,7 @@ def _main(args):
     fastrcnn_reg_output = np.squeeze(fastrcnn_reg_output, axis=0)
     # 最大值索引 (300,)
     argmax_cls = np.argmax(fastrcnn_cls_output, axis=1)
+    print(argmax_cls)
     # 取出最大类别 (300,)
     max_cls = fastrcnn_cls_output[np.arange(len(argmax_cls)), argmax_cls]
     # (None, 6) -- x1, y1, x2, y2, score, cls
