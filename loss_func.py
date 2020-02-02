@@ -62,7 +62,7 @@ def fastrcnn_reg_loss(y_true, y_pred):
     roi_bbox_reg = tf.reduce_mean(tf.reduce_sum(tf.multiply(roi_outside_weights, diff_sL1), axis=1))
 
     # Constant for weighting bounding box loss with classification loss
-    roi_bbox_reg = config.train_rpn_bbox_lambda * roi_bbox_reg
+    roi_bbox_reg = config.train_rfcn_bbox_lambda * roi_bbox_reg
 
     return roi_bbox_reg
 

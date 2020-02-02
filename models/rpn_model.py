@@ -8,7 +8,7 @@ def get_rpn_model(model_body, anchors_num, **kwargs):
                     kernel_initializer='normal', name='merge_conv2d')(share_features)
     rpn_cls_output = Conv2D(anchors_num * 2, 1, kernel_initializer='uniform',
                             name='rpn_cls_conv2d')(output)
-    rpn_reg_output = Conv2D(anchors_num * 4, 1, activation='linear', kernel_initializer='zero',
+    rpn_reg_output = Conv2D(anchors_num * 4, 1, kernel_initializer='zero',
                             name='rpn_reg_conv2d')(output)
     rpn_model = Model(model_body.input, [rpn_cls_output, rpn_reg_output])
     return rpn_model

@@ -58,6 +58,7 @@ class Config(object):
 
         # loss
         self.train_rpn_bbox_lambda = 10.0
+        self.train_rfcn_bbox_lambda = 1.
 
         # Minibatch size (number of regions of interest [ROIs])
         self.train_batch_size = 128
