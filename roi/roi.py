@@ -9,7 +9,7 @@ def roi_pool(feature_maps, rois, im_dims=(cfg.DEFAUTL_IMAGE_SIZE, cfg.DEFAUTL_IM
     pooled_features = tf.convert_to_tensor(pooled_features)
     return pooled_features
 
-
+# so cool
 def _roi_pool_py(feature_maps, regions, im_dims):
     """
     roi pooling 真正实现  这里是缩小了16倍

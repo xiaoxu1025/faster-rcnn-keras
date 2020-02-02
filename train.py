@@ -117,7 +117,7 @@ def save_weights(rpn_model, fastrcnn_model, fasterrcnn_model):
 
 for epoch_num in range(num_epochs):
     start_time = time.time()
-    progbar = generic_utils.Progbar(epoch_length)  # keras progress bar 사용
+    progbar = generic_utils.Progbar(epoch_length)  # keras progress bar
     print('Epoch {}/{}'.format(epoch_num + 1, num_epochs))
     while True:
         # (1, 342, 50)
