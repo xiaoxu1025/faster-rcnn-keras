@@ -34,7 +34,9 @@ def _proposal_layer(rpn_bbox_cls, rpn_bbox_pred, im_size, feat_stride, eval_mode
     # all_anchors (A * H * W, 4)
     anchors, A = anchor.get_anchors()
     num_anchors = A
+    # (1,  2 * k, H, W)
     rpn_bbox_cls_prob = np.transpose(rpn_bbox_cls_prob, [0, 3, 1, 2])
+    # (1,  4 * k, H, W)
     rpn_bbox_pred = np.transpose(rpn_bbox_pred, [0, 3, 1, 2])
 
     assert rpn_bbox_cls_prob.shape[0] == 1, 'Only support 1 batch_size'
@@ -51,6 +53,7 @@ def _proposal_layer(rpn_bbox_cls, rpn_bbox_pred, im_size, feat_stride, eval_mode
         post_nms_topN = cfg.test_rpn_post_nms_top_n
         nms_thresh = cfg.test_rpn_nms_thresh
         min_size = cfg.test_rpn_min_size
+    # 对于预测的cls 前9个表示背景 后9个表示前景
     scores = rpn_bbox_cls_prob[:, num_anchors:, :, :]
     bbox_deltas = rpn_bbox_pred
     # (1, 4 * k, H, W) -> (1, H, W, 4 * A)
@@ -61,7 +64,7 @@ def _proposal_layer(rpn_bbox_cls, rpn_bbox_pred, im_size, feat_stride, eval_mode
     # transpose to (1, H, W, A)
     # reshape to (1 * H * W * A, 1) where rows are ordered by (h, w, a)
     scores = scores.transpose((0, 2, 3, 1)).reshape((-1, 1))
-
+    # 根据anchor 和 bbox 预测值 回归出来真正的anchor 从dx dy dw dh -->  cx cy w, h
     proposals = bbox_transform_inv(anchors, bbox_deltas)
 
     # 2. clip predicted boxes to image

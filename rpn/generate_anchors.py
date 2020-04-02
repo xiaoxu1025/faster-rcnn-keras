@@ -4,7 +4,7 @@ Generates a regular grid of multi-scale, multi-aspect anchor boxes.
 """
 import numpy as np
 
-
+# 128 256 512
 def generate_anchors(base_size=16, ratios=[0.5, 1, 2], scales=2 ** np.arange(3, 6)):
     # 生成base anchor [0, 0, 15, 15]
     base_anchor = np.array([1, 1, base_size, base_size]) - 1

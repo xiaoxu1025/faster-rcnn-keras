@@ -9,13 +9,13 @@ def rpn_cls_loss(y_true, y_pred):
     rpn_labels = y_true
     # 计算分类损失
     # (1, H, W, 2K) --> (1, 2K, H, W) --> (1, 2, K * H, W ) --> (1, K * H, W, 2 )
-    # 这里是和label进行了一样的变换 如果不做这些变换 会变成 1张背景 1张前景
+    # 这里是和label进行了一样的变换 让他预测值变成前9张背景后9张前景 如果不做这些变换 会变成 1张背景 1张前景
     shape = rpn_cls_output.shape
     rpn_cls_output = tf.transpose(rpn_cls_output, [0, 3, 1, 2])
     rpn_cls_output = tf.reshape(rpn_cls_output, [-1, 2, shape[3] // 2 * shape[1], shape[2]])
     rpn_cls_output = tf.transpose(rpn_cls_output, [0, 2, 3, 1])
     rpn_cls_output = tf.reshape(rpn_cls_output, [-1, 2])
-
+    # labels.reshape((A * feature_height, feature_width))
     rpn_labels = tf.reshape(rpn_labels, [-1])
     rpn_labels = tf.cast(rpn_labels, dtype=tf.int32)
     rpn_labels = tf.reshape(tf.gather(rpn_labels, tf.where(tf.not_equal(rpn_labels, -1))), [-1])
@@ -36,8 +36,8 @@ def rpn_reg_loss(y_true, y_pred):
     rpn_bbox_outside_weights = tf.transpose(rpn_bbox_outside_weights, (0, 2, 3, 1))
     diff = tf.multiply(rpn_bbox_inside_weights, rpn_reg_output - rpn_bbox_targets)
     diff_sl1 = smooth_l1(diff, 3.0)
-
-    rpn_bbox_reg = tf.reduce_sum(tf.multiply(rpn_bbox_outside_weights, diff_sl1))
+    # feature_h * feature_w
+    rpn_bbox_reg = tf.reduce_mean(tf.multiply(rpn_bbox_outside_weights, diff_sl1))
     rpn_bbox_reg_losses = config.train_rpn_bbox_lambda * rpn_bbox_reg
     return rpn_bbox_reg_losses
 

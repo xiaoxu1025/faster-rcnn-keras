@@ -36,3 +36,4 @@ def get_anchors(feature_maps_shape, feat_stride=16):
     A = anchors_num
     anchors = anchors.reshape((A, K, 4)).transpose((1, 0, 2)).reshape((K * A, 4))
     return anchors, A
+

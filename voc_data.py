@@ -141,10 +141,8 @@ class VocData(object):
                     labels = self._unmap(labels, total_anchors_num, inds_inside, fill=-1)
                     # 把图像内部的anchor对应的bbox_target映射回所有的anchor(加上了那些超出边界的anchor，填充0)
                     bbox_targets = self._unmap(bbox_targets, total_anchors_num, inds_inside, fill=0)
-                    # 把图像内部的anchor对应的bbox_target映射回所有的anchor(加上了那些超出边界的anchor，填充0)
                     # [H * W * A, 4]
                     bbox_inside_weights = self._unmap(bbox_inside_weights, total_anchors_num, inds_inside, fill=0)
-                    # 把图像内部的anchor对应的bbox_target映射回所有的anchor(加上了那些超出边界的anchor，填充0)
                     bbox_outside_weights = self._unmap(bbox_outside_weights, total_anchors_num, inds_inside, fill=0)
 
                     # 进行reshape
@@ -171,7 +169,7 @@ class VocData(object):
                 rpn_bbox_outside_weights = np.array(rpn_bbox_outside_weights)
                 img_data = np.array(img_data)
                 total_gt_boxes = np.asarray(total_gt_boxes)
-                # (1, 108, 38, 50)
+                # (1, 3 * 4 * A, H, W)
                 rpn_bbox_targets = np.concatenate([rpn_bbox_targets, rpn_bbox_inside_weights, rpn_bbox_outside_weights],
                                                   axis=1)
                 yield img_data, [rpn_labels, rpn_bbox_targets], total_gt_boxes
